@@ -14,7 +14,7 @@ namespace MyPHesabdari.Model
         public int? CostId { get; set; }
 
         public virtual CurrencyUnit CurrencyUnit { get; set; }
-        public int? CurrencyUnitId { get; set; }
+        public int CurrencyUnitId { get; set; }
 
         public decimal Amount { get; set; }
         public string Description { get; set; }
