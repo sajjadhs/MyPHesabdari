@@ -15,8 +15,20 @@ namespace MyPHesabdari.Model
 
         public virtual DbSet<Cost> Costs { get; set; }
         public virtual DbSet<Expense> Expenses { get; set; }
+        public virtual DbSet<CurrencyUnit> CurrencyUnits { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CurrencyUnit>().HasData(
+                new CurrencyUnit
+                {
+                    Id = 1,
+                    Name = "TurkLira"
+                }, new CurrencyUnit
+                {
+                    Id = 2,
+                    Name = "Toman"
+                }
+            );
             base.OnModelCreating(modelBuilder);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

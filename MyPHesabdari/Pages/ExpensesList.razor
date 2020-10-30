@@ -17,14 +17,16 @@
         </div>
     </div>
 </div>
-@if (message != "")
+@if (message.Count > 0)
 {
     <div class="row">
         <div class="col-sm-12">
-            <div class="alert alert-info">
-                @message
-            </div>
-
+            @foreach (var item in message)
+            {
+                <div class="alert alert-info">
+                    @item
+                </div>
+            }
         </div>
     </div>
 }
@@ -54,7 +56,9 @@
         {
             <tr>
                 <td style="background-color:#a7ff9d">@item.ExpenseDate.ToString("yyyy-MM-dd")</td>
-                <td>@item.Amount.ToString("#,#.00#")</td>
+                <td>@item.Amount.ToString("#,#.00#") @if (item.CurrencyUnit != null)
+                {@item.CurrencyUnit.Name;
+            }</td>
                 <td>
                     @if (item.Cost != null && item.CostId != null)
                     {
@@ -76,12 +80,19 @@
 
 
 @code {
-
+    List<MyPHesabdari.Model.CurrencyUnit> currencyUnits;
     protected override async Task OnInitializedAsync()
     {
-        Expenses = await context.Expenses.OrderByDescending(q => q.ExpenseDate).ToListAsync();
+        currencyUnits = await context.CurrencyUnits.ToListAsync().ConfigureAwait(true);
+        Expenses = await context.Expenses.OrderByDescending(q => q.ExpenseDate).ToListAsync().ConfigureAwait(true);
 
-        message = "مجموع مخارج برابر است با " + Expenses.Sum(q => q.Amount);
+        foreach (var item in currencyUnits)
+        {
+            var sum = Expenses.Where(w => w.CurrencyUnitId == item.Id).Sum(q => q.Amount);
+            if (sum > 0)
+                message.Add("مجموع مخارج برابر است با " + sum + " " + item.Name);
+        }
+
         from = to = DateTime.Now;
         await base.OnInitializedAsync();
     }
@@ -89,12 +100,19 @@
 
 
     DateTime from, to;
-    string message = "";
+    List<string> message = new List<string>();
 
     async Task Show()
     {
+        message.Clear();
         Expenses = await context.Expenses.AsQueryable().Where(q => q.ExpenseDate.Date >= from && q.ExpenseDate.Date <= to).OrderByDescending(q => q.ExpenseDate).ToListAsync();
-        message = "مجموع مخارج برابر است با " + Expenses.Sum(q => q.Amount);
+
+        foreach (var item in currencyUnits)
+        {
+            var sum = Expenses.Where(w => w.CurrencyUnitId == item.Id).Sum(q => q.Amount);
+            if (sum > 0)
+                message.Add("مجموع مخارج برابر است با " + sum + " " + item.Name);
+        }
     }
 
 
