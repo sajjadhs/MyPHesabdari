@@ -1,0 +1,109 @@
+﻿@page "/cost"
+@using Microsoft.EntityFrameworkCore
+@inject MyPHesabdari.Model.MyDbContext context
+@inject IJSRuntime JSRuntime
+<h1>دسته بندی:</h1>
+
+
+@if (AddMode)
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                نام دسته: <input @bind="name" class="form-control" placeholder="مثلا خوراک یا ..." />
+            </div>
+            <div class="form-group">
+                دسته پدر: <select @bind="parentId" class="form-control select2">
+                    <option value="0">Select Parent</option>
+                    @foreach (var item in costList)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-info" @onclick="Save">ثبت</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="AddNew">افزودن جدید</button>
+}
+
+
+<hr />
+<table class="table table-striped">
+
+    @if (costList != null)
+        @foreach (MyPHesabdari.Model.Cost item in costList)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <span class="btn btn-danger" @onclick="_ => DeleteItem(item.Id)">Delete</span>
+                </td>
+            </tr>
+        }
+</table>
+
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        costList = await context.Costs.ToListAsync();
+        await base.OnInitializedAsync();
+    }
+
+
+
+
+
+
+
+
+
+
+    private List<MyPHesabdari.Model.Cost> costList;
+    string name = "";
+    int? parentId;
+    private bool AddMode = false;
+    private void AddNew()
+    {
+        name = "";
+        AddMode = true;
+    }
+
+
+
+
+
+    private void Save()
+    {
+        if (!string.IsNullOrEmpty(name))
+        {
+            AddMode = false;
+            if (parentId == 0) parentId = null;
+            var ccc = new Model.Cost { Name = name, CostId = parentId };
+            context.Costs.Add(ccc);
+            parentId = null;
+            context.SaveChanges();
+            costList.Add(ccc);
+        }
+    }
+    async Task DeleteItem(int id)
+    {
+
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"اطمینان از حذف دسته بندی?"))
+            return;
+
+
+        var item = context.Costs.Find(id);
+        context.Costs.Remove(item);
+        context.SaveChanges();
+        costList.Remove(costList.Find(v => v.Id == id));
+    }
+}

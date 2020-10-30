@@ -1,0 +1,69 @@
+﻿@page "/expense"
+@using Microsoft.EntityFrameworkCore
+@inject MyPHesabdari.Model.MyDbContext context
+@inject IJSRuntime JSRuntime
+<h1>هزینه ها</h1>
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                تاریخ: <input @bind="Expense.ExpenseDate" type="date" class="form-control" placeholder="" />
+            </div>
+            <div class="form-group">
+                عنوان: <input @bind="Expense.Description" class="form-control" placeholder="مثلا نان یا ..." />
+            </div>
+            <div class="form-group">
+                مبلغ: <input @bind="Expense.Amount" class="form-control" type="number" placeholder="2.000" />
+            </div>
+            <div class="form-group">
+                پرداخت کننده: <input @bind="Expense.Payer" class="form-control" placeholder="" />
+            </div>
+            <div class="form-group">
+                دسته هزینه: <select @bind="Expense.CostId" class="form-control select2">
+                    @if(costList!=null)
+                    @foreach (var item in costList)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-info" @onclick="Save">ثبت</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+<hr />
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        costList = await context.Costs.ToListAsync();
+        await base.OnInitializedAsync();
+    }
+    private List<MyPHesabdari.Model.Cost> costList;
+    private MyPHesabdari.Model.Expense Expense = new Model.Expense();
+
+
+
+    async Task Save()
+    {
+        if (Expense.Amount != null && Expense.ExpenseDate != null)
+        {
+            await context.Expenses.AddAsync(Expense);
+            await context.SaveChangesAsync();
+            Expense = new Model.Expense();
+        }
+        else
+        {
+
+        }
+    }
+
+}
