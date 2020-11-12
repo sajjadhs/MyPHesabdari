@@ -1,5 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">حسابداری شخصی</a>
+﻿@inject IStringLocalizer<SharedRes> L
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">@L["AppTitle"]</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -9,25 +10,33 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> خوش آمد
+                <span class="oi oi-home" aria-hidden="true"></span> @L["Home"]
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="cost">
-                <span class="oi oi-plus" aria-hidden="true"></span> دسته هزینه
+                <span class="oi oi-plus" aria-hidden="true"></span> @L["Categories"]
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="expense">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> ثبت مخارج
+                <span class="oi oi-list-rich" aria-hidden="true"></span> @L["CreateExpenses"]
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="ExpensesList">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> لیست مخارج
+                <span class="oi oi-eye" aria-hidden="true"></span> @L["ExpensesList"]
             </NavLink>
         </li>
+
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="Language">
+                <span class="oi oi-compass" aria-hidden="true"></span> @L["Lang"]
+            </NavLink>
+        </li>
+
         
+
     </ul>
 </div>
 

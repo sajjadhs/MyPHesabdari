@@ -1,19 +1,20 @@
 ﻿@page "/ExpensesList"
 @using Microsoft.EntityFrameworkCore
-@inject MyPHesabdari.Model.MyDbContext context
+@inject IMyContext context
 @inject IJSRuntime JSRuntime
-<h1>لیست هزینه ها</h1>
+@inject IStringLocalizer<SharedRes> L
+<h1>@L["ExpensesList"]</h1>
 
 <div class="row">
     <div class="col-sm-12">
-        <div class="form-group col-4">
-            از تاریخ<input type="date" @bind="from" class="form-control" />
+        <div class="form-group ">
+            @L["FromDate"]<input type="date" @bind="from" class="form-control" />
         </div>
-        <div class="form-group col-4">
-            تا تاریخ <input type="date" @bind="to" class="form-control" />
+        <div class="form-group ">
+            @L["ToDate"] <input type="date" @bind="to" class="form-control" />
         </div>
-        <div class="form-group col-4">
-            <button @onclick="Show" class="btn btn-dark">نمایش</button>
+        <div class="form-group ">
+            <button @onclick="(async ()=>await ShowBetweenDates())" class="btn btn-dark">@L["Show"]</button>
         </div>
     </div>
 </div>
@@ -39,16 +40,16 @@
         <thead>
             <tr>
                 <th>
-                    تاریخ
+                    @L["Date"]
                 </th>
                 <th>
-                    مبلغ
+                    @L["Amount"]
                 </th>
                 <th>
-                    دسته
+                    @L["Category"]
                 </th>
                 <th>
-                    پرداخت از
+                    @L["Payer"]
                 </th>
             </tr>
         </thead>
@@ -56,9 +57,11 @@
         {
             <tr>
                 <td style="background-color:#a7ff9d">@item.ExpenseDate.ToString("yyyy-MM-dd")</td>
-                <td>@item.Amount.ToString("#,#.00#") @if (item.CurrencyUnit != null)
-                {@item.CurrencyUnit.Name;
-            }</td>
+                <td>
+                    @item.Amount.ToString("#,#.00#") @if (item.CurrencyUnit != null)
+                    {@item.CurrencyUnit.Name;
+                }
+                </td>
                 <td>
                     @if (item.Cost != null && item.CostId != null)
                     {
@@ -68,7 +71,7 @@
                 <td>@item.Payer</td>
             </tr>
             <tr>
-                <td>توضیحات</td>
+                <td>@L["Desc"]</td>
                 <td colspan="3">@item.Description</td>
             </tr>
         }
@@ -80,41 +83,43 @@
 
 
 @code {
-    List<MyPHesabdari.Model.CurrencyUnit> currencyUnits;
+    private List<MyPHesabdari.Model.CurrencyUnit> currencyUnits;
+    private List<MyPHesabdari.Model.Expense> Expenses;
+    private DateTime from, to;
+    private List<string> message = new List<string>();
+
+
     protected override async Task OnInitializedAsync()
     {
         currencyUnits = await context.CurrencyUnits.ToListAsync().ConfigureAwait(true);
         Expenses = await context.Expenses.OrderByDescending(q => q.ExpenseDate).ToListAsync().ConfigureAwait(true);
-
-        foreach (var item in currencyUnits)
-        {
-            var sum = Expenses.Where(w => w.CurrencyUnitId == item.Id).Sum(q => q.Amount);
-            if (sum > 0)
-                message.Add("مجموع مخارج برابر است با " + sum + " " + item.Name);
-        }
-
+        CalculateTotals();
         from = to = DateTime.Now;
         await base.OnInitializedAsync();
     }
-    private List<MyPHesabdari.Model.Expense> Expenses;
 
 
-    DateTime from, to;
-    List<string> message = new List<string>();
 
-    async Task Show()
+
+
+    async Task ShowBetweenDates()
     {
         message.Clear();
         Expenses = await context.Expenses.AsQueryable().Where(q => q.ExpenseDate.Date >= from && q.ExpenseDate.Date <= to).OrderByDescending(q => q.ExpenseDate).ToListAsync();
+        CalculateTotals();
+    }
+
+
+    void CalculateTotals()
+    {
 
         foreach (var item in currencyUnits)
         {
             var sum = Expenses.Where(w => w.CurrencyUnitId == item.Id).Sum(q => q.Amount);
             if (sum > 0)
-                message.Add("مجموع مخارج برابر است با " + sum + " " + item.Name);
+                message.Add(L["TotalIs"] + " " + sum + " " + item.Name);
         }
+
     }
-
-
 
 }

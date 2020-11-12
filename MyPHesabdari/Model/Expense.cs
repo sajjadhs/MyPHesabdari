@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyPHesabdari.Model
 {
@@ -14,9 +15,11 @@ namespace MyPHesabdari.Model
         public int? CostId { get; set; }
 
         public virtual CurrencyUnit CurrencyUnit { get; set; }
+        [Required(ErrorMessage = "{0} is required")]
         public int CurrencyUnitId { get; set; }
-
+        [Required(ErrorMessage = "{0} is required")]
         public decimal Amount { get; set; }
+        [Required(ErrorMessage = "{0} is required")]
         public string Description { get; set; }
         public DateTime ExpenseDate { get; set; }
     }

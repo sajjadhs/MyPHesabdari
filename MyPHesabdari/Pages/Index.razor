@@ -1,20 +1,20 @@
 ﻿@page "/"
+@inject IStringLocalizer<SharedRes> Loc
+<h1>@Loc["AppTitle"]</h1>
 
-<h1>حسابداری شخصی</h1>
 
-به برنامه
-<b>حسابداری</b>
- خوش امدی
+@Loc["WelcomeMsg"]
+
 
 <br />
 
-<a class="btn btn-danger" href="/cost">ثبت دسته هزینه ها</a>
+<a class="btn btn-danger" href="/cost">@Loc["Category"]</a>
 <br />
 <br />
-<a class="btn btn-warning" href="/expense">ثبت هزینه</a>
+<a class="btn btn-warning" href="/expense">@Loc["CreateExpenses"]</a>
 <br />
 <br />
-<a class="btn btn-info" href="/expenseslist">لیست هزینه ها</a>
+<a class="btn btn-info" href="/expenseslist">@Loc["ExpensesList"]</a>
 
 
 

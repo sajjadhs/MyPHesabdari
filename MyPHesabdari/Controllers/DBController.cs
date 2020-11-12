@@ -8,6 +8,7 @@ using MyPHesabdari.Model;
 
 namespace MyPHesabdari.Controllers
 {
+    [Route("[controller]")]
     public class DBController : Controller
     {
         readonly MyDbContext dbContext;
@@ -16,8 +17,8 @@ namespace MyPHesabdari.Controllers
         {
             this.dbContext = dbContext;
         }
-
-        public async Task<IActionResult> Index()
+        [HttpGet("[action]")]
+        public async Task<IActionResult> force()
         {
             await dbContext.Database.MigrateAsync();
             return Json(true);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -23,18 +24,43 @@ namespace MyPHesabdari
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        List<CultureInfo> supportedCultures => new List<CultureInfo>
+        {
+            new CultureInfo("en"),
+            new CultureInfo("fa"),
+            new CultureInfo("tr")
+        };
+
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddDbContextPool<MyDbContext>(q => { //q.UseSqlite("data source=mysd.db");
+
+            services.AddDbContextPool<MyDbContext>(q =>
+            { //q.UseSqlite("data source=mysd.db");
                 q.UseSqlServer(Configuration.GetConnectionString("CN"));
-            
+
             });
-          //  services.AddSingleton<WeatherForecastService>();
+
+
+            //adding this as Transiet will stop error in async-await methods
+            services.AddTransient<IMyContext, MyDbContext>();
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("fa");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+
+
+            services.AddControllers().AddDataAnnotationsLocalization();
+            services.AddRazorPages()
+                .AddViewLocalization()
+                .AddDataAnnotationsLocalization();
+            services.AddServerSideBlazor();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,14 +74,19 @@ namespace MyPHesabdari
             {
                 app.UseExceptionHandler("/Error");
             }
-
+            app.UseRequestLocalization(options =>
+            {
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("fa");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

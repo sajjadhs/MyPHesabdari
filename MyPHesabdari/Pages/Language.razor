@@ -1,0 +1,36 @@
+﻿@page "/Language"
+@inject NavigationManager navManager
+@inject IStringLocalizer<SharedRes> L
+
+    <dvi class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @L["Lang"]
+                <select @onchange="CultureChanged" class="form-control">
+                    @GetOptionTagFor("en", "English")
+                    @GetOptionTagFor("fa", "فارسی")
+                    @GetOptionTagFor("tr", "Türkçe")
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6"></div>
+    </dvi>
+
+    @code{
+
+        private void CultureChanged(ChangeEventArgs e)
+        {
+            var uri = new Uri(navManager.Uri)
+                .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+            var value = e.Value.ToString();
+            navManager.NavigateTo("/culture/changeculture?culture=" + Uri.EscapeDataString(value) + "&returnUrl=" + Uri.EscapeDataString(uri), true);
+        }
+
+        private MarkupString GetOptionTagFor(string culture, string text)
+        {
+            string selected = "";
+            selected = System.Globalization.CultureInfo.CurrentUICulture.Name.ToLower().Contains(culture.ToLower()) ? "selected" : "";
+
+            return (MarkupString)$"<option {selected} value=\"{culture}\">{text}</option>";
+        }
+    }

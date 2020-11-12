@@ -1,46 +1,66 @@
 ﻿@page "/expense"
 @using Microsoft.EntityFrameworkCore
-@inject MyPHesabdari.Model.MyDbContext context
+@inject IMyContext context
 @inject IJSRuntime JSRuntime
-<h1>هزینه ها</h1>
+@inject IStringLocalizer<Expenses> L
+<h1>@L["Expenses"]</h1>
 
 
 <div class="row">
-    <div class="col-sm-12">
-        <div class="form-group">
-            تاریخ: <input @bind="Expense.ExpenseDate" type="date" class="form-control" placeholder="" />
+    <EditForm OnValidSubmit="(async _=> await Save())" Model="@Expense">
+        <DataAnnotationsValidator />
+        <span class="text-danger">
+            <ValidationSummary />
+        </span>
+        <div class="col-sm-12">
+            <div class="form-group">
+                @L["Date"]: <input @bind="Expense.ExpenseDate" type="date" class="form-control" placeholder="" required />
+            </div>
+            <div class="form-group">
+                @L["Title"]: <input @bind="Expense.Description" class="form-control" placeholder="@L["CategoryPlaceHolder"]" />
+                <span class="text-danger">
+                    <ValidationMessage For="@(()=>Expense.Description)" />
+                </span>
+            </div>
+            <div class="form-group">
+                @L["Amount"]: <input @bind="Expense.Amount" class="form-control" type="number" placeholder="@L["Amount"]" required />
+                <span class="text-danger">
+                    <ValidationMessage For="@(()=>Expense.Amount)" />
+                </span>
+            </div>
+            <div class="form-group">
+                @L["Payer"]: <input @bind="Expense.Payer" class="form-control" placeholder="" />
+            </div>
+            <div class="form-group">
+                @L["Category"]: <select @bind="Expense.CostId" class="form-control select2">
+                    @if (costList != null)
+                        @foreach (var item in costList)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                </select>
+            </div>
+            <div class="form-group">
+                @L["CurrencyUnit"]: <select @bind="Expense.CurrencyUnitId" class="form-control select2">
+                    @if (currencyList != null)
+                        @foreach (var item in currencyList)
+                        {
+                            if (item.Id == Expense.CurrencyUnitId)
+                            {
+                                <option selected value="@item.Id">@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        }
+                </select>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-info" type="submit">@L["Submit"]</button>
+            </div>
         </div>
-        <div class="form-group">
-            عنوان: <input @bind="Expense.Description" class="form-control" placeholder="مثلا نان یا ..." />
-        </div>
-        <div class="form-group">
-            مبلغ: <input @bind="Expense.Amount" class="form-control" type="number" placeholder="2.000" />
-        </div>
-        <div class="form-group">
-            پرداخت کننده: <input @bind="Expense.Payer" class="form-control" placeholder="" />
-        </div>
-        <div class="form-group">
-            دسته هزینه: <select @bind="Expense.CostId" class="form-control select2">
-                @if (costList != null)
-                    @foreach (var item in costList)
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
-            </select>
-        </div>
-        <div class="form-group">
-            واحد پولی: <select @bind="Expense.CurrencyUnitId" class="form-control select2">
-                @if (currencyList != null)
-                    @foreach (var item in currencyList)
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
-            </select>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-info" @onclick="Save">ثبت</button>
-        </div>
-    </div>
+    </EditForm>
 </div>
 
 
@@ -50,26 +70,33 @@
 
 
 @code {
+    private List<MyPHesabdari.Model.Cost> costList;
+    private List<MyPHesabdari.Model.CurrencyUnit> currencyList;
+    private MyPHesabdari.Model.Expense Expense = new Model.Expense();
 
     protected override async Task OnInitializedAsync()
     {
         costList = await context.Costs.ToListAsync().ConfigureAwait(true);
-        currencyList = await context.CurrencyUnits.ToListAsync().ConfigureAwait(true);
+        var l = await context.CurrencyUnits.ToListAsync().ConfigureAwait(true);
+        if (l.Any())
+            Expense.CurrencyUnitId = l.FirstOrDefault().Id;
+        currencyList = l;
         await base.OnInitializedAsync();
     }
-    private List<MyPHesabdari.Model.Cost> costList;
-    private List<MyPHesabdari.Model.CurrencyUnit> currencyList;
-    private MyPHesabdari.Model.Expense Expense = new Model.Expense();
+
 
 
 
     async Task Save()
     {
-        if (Expense.Amount != null && Expense.ExpenseDate != null)
+        if (Expense.ExpenseDate != null)
         {
+
             await context.Expenses.AddAsync(Expense);
             await context.SaveChangesAsync();
+            var selected = Expense.CurrencyUnitId;
             Expense = new Model.Expense();
+            Expense.CurrencyUnitId = selected;
         }
         else
         {
