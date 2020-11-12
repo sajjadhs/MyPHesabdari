@@ -1,5 +1,6 @@
 ﻿@page "/cost"
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.Rendering
 @inject IMyContext context
 @inject IJSRuntime JSRuntime
 @inject IStringLocalizer<SharedRes> Loc
@@ -30,7 +31,7 @@
 }
 else
 {
-<button class="btn btn-primary" @onclick="AddNew">@Loc["New"]</button>
+    <button class="btn btn-primary" @onclick="AddNew">@Loc["New"]</button>
 }
 
 
@@ -38,20 +39,16 @@ else
 <table class="table table-striped">
 
     @if (costList != null)
-        @foreach (MyPHesabdari.Model.Cost item in costList)
+        @foreach (MyPHesabdari.Model.Cost item in GetParents())
         {
-            <tr>
-                <td>@item.Name</td>
-                <td>
-                    <span class="btn btn-danger" @onclick="(async _ =>await DeleteItem(item.Id))">@Loc["Delete"]</span>
-                </td>
-            </tr>
+
+            GetChildren(__builder, item, "!.");
         }
 </table>
 
 
+@code{
 
-@code {
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,52 +56,79 @@ else
         await base.OnInitializedAsync();
     }
 
+}
+@functions {
 
 
 
 
 
-
-
-
-
-    private List<MyPHesabdari.Model.Cost> costList;
-    string name = "";
-    int? parentId;
-    private bool AddMode = false;
-    private void AddNew()
+    private void GetChildren(RenderTreeBuilder __builder, MyPHesabdari.Model.Cost item, string level)
     {
-        name = "";
-        AddMode = true;
-    }
+
+        <tr>
+            <td>@level @item.Name</td>
+            <td>
+                <span class="btn btn-danger" @onclick="(async _ =>await DeleteItem(item.Id))">@Loc["Delete"]</span>
+            </td>
+        </tr>
 
 
+        var children = costList.Where(v => v.CostId == item.Id).ToList();
+        if (children != null)
+            @foreach (MyPHesabdari.Model.Cost child in children)
+            {
+                GetChildren(__builder, child, level + "!.");
+            }
 
-
-
-    private void Save()
-    {
-        if (!string.IsNullOrEmpty(name))
-        {
-            AddMode = false;
-            if (parentId == 0) parentId = null;
-            var ccc = new Model.Cost { Name = name, CostId = parentId };
-            context.Costs.Add(ccc);
-            parentId = null;
-            context.SaveChanges();
-            costList.Add(ccc);
         }
-    }
-    async Task DeleteItem(int id)
-    {
 
-        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"اطمینان از حذف دسته بندی?"))
-            return;
+        private List<MyPHesabdari.Model.Cost> GetParents()
+        {
+            return costList.Where(v => v.CostId == null).ToList();
+        }
 
 
-        var item = context.Costs.Find(id);
-        context.Costs.Remove(item);
-        context.SaveChanges();
-        costList.Remove(costList.Find(v => v.Id == id));
-    }
+
+
+
+        private List<MyPHesabdari.Model.Cost> costList;
+        string name = "";
+        int? parentId;
+        private bool AddMode = false;
+        private void AddNew()
+        {
+            name = "";
+            AddMode = true;
+        }
+
+
+
+
+
+        private void Save()
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                AddMode = false;
+                if (parentId == 0) parentId = null;
+                var ccc = new Model.Cost { Name = name, CostId = parentId };
+                context.Costs.Add(ccc);
+                parentId = null;
+                context.SaveChanges();
+                costList.Add(ccc);
+            }
+        }
+        async Task DeleteItem(int id)
+        {
+
+            if (!await JSRuntime.InvokeAsync<bool>("confirm", $"اطمینان از حذف دسته بندی?"))
+                return;
+
+
+            var item = context.Costs.Find(id);
+            context.Costs.Remove(item);
+            context.SaveChanges();
+            costList.Remove(costList.Find(v => v.Id == id));
+        }
 }
