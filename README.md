@@ -5,4 +5,6 @@ I am continually updating this repository based on any requirements I feel
 
 Basic UI is for persian language... I will add localization soon to support english lanugage also
 
-Contribute if you are willing...
+# Contribution
+
+Any contributions is welcomed :D 
