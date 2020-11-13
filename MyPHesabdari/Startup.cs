@@ -49,8 +49,8 @@ namespace MyPHesabdari
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("fa");
-                options.SupportedCultures = supportedCultures;
+                //options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("fa");
+          //      options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
             });
 
@@ -76,8 +76,8 @@ namespace MyPHesabdari
             }
             app.UseRequestLocalization(options =>
             {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("fa");
-                options.SupportedCultures = supportedCultures;
+                //options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("fa");
+          //      options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
             });
             app.UseStaticFiles();
