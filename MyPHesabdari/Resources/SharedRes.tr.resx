@@ -147,6 +147,9 @@
   <data name="Desc" xml:space="preserve">
     <value>Açıklama</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Guncelle</value>
+  </data>
   <data name="Expenses" xml:space="preserve">
     <value>Masraflar</value>
   </data>

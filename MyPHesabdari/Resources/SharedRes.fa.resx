@@ -147,6 +147,9 @@
   <data name="Desc" xml:space="preserve">
     <value>توضیحات</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
   <data name="Expenses" xml:space="preserve">
     <value>هزینه ها</value>
   </data>

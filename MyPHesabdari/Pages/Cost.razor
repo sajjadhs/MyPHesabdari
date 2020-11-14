@@ -7,15 +7,15 @@
 <h1>@Loc["Categories"]</h1>
 
 
-@if (AddMode)
+@if (IsFormVisible)
 {
     <div class="row">
         <div class="col-sm-12">
             <div class="form-group">
-                @Loc["Category"] <input @bind="name" class="form-control" placeholder="@Loc["CategoryPlaceHolder"]" />
+                @Loc["Category"] <input @bind="form_cost.Name" class="form-control" placeholder="@Loc["CategoryPlaceHolder"]" />
             </div>
             <div class="form-group">
-                @Loc["ParentCategory"] <select @bind="parentId" class="form-control select2">
+                @Loc["ParentCategory"] <select @bind="form_cost.CostId" class="form-control select2">
                     <option value="0">Select Parent</option>
                     @foreach (var item in costList)
                     {
@@ -24,7 +24,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <button class="btn btn-info" @onclick="Save">@Loc["Submit"]</button>
+                <button class="btn btn-info" @onclick="(async _ => await Save())">@Loc["Submit"]</button>
             </div>
         </div>
     </div>
@@ -62,7 +62,6 @@ else
 
 
 
-
     private void GetChildren(RenderTreeBuilder __builder, MyPHesabdari.Model.Cost item, string level)
     {
 
@@ -70,6 +69,7 @@ else
             <td>@level @item.Name</td>
             <td>
                 <span class="btn btn-danger" @onclick="(async _ =>await DeleteItem(item.Id))">@Loc["Delete"]</span>
+                <span class="btn btn-primary" @onclick="( _ => EditItem(item.Id))">@Loc["Edit"]</span>
             </td>
         </tr>
 
@@ -81,54 +81,71 @@ else
                 GetChildren(__builder, child, level + "!.");
             }
 
-        }
+    }
 
-        private List<MyPHesabdari.Model.Cost> GetParents()
+    private List<MyPHesabdari.Model.Cost> GetParents()
+    {
+        return costList.Where(v => v.CostId == null).ToList();
+    }
+
+
+
+
+
+    private List<MyPHesabdari.Model.Cost> costList;
+    private MyPHesabdari.Model.Cost form_cost;
+    private bool IsFormVisible = false;
+    private void AddNew()
+    {
+        form_cost = new Model.Cost();
+        IsFormVisible = true;
+    }
+
+
+
+
+
+    async Task Save()
+    {
+        if (!string.IsNullOrEmpty(form_cost.Name))
         {
-            return costList.Where(v => v.CostId == null).ToList();
-        }
-
-
-
-
-
-        private List<MyPHesabdari.Model.Cost> costList;
-        string name = "";
-        int? parentId;
-        private bool AddMode = false;
-        private void AddNew()
-        {
-            name = "";
-            AddMode = true;
-        }
-
-
-
-
-
-        private void Save()
-        {
-            if (!string.IsNullOrEmpty(name))
+            if (form_cost.CostId == 0) form_cost.CostId = null;
+            if (form_cost.Id == 0)
             {
-                AddMode = false;
-                if (parentId == 0) parentId = null;
-                var ccc = new Model.Cost { Name = name, CostId = parentId };
-                context.Costs.Add(ccc);
-                parentId = null;
-                context.SaveChanges();
-                costList.Add(ccc);
+                //add mode
+                //var ccc = new Model.Cost { Name = name, CostId = parentId };
+                await context.Costs.AddAsync(form_cost).ConfigureAwait(true);
+                await context.SaveChangesAsync();
+                costList.Add(form_cost);
             }
+            else
+            {
+                //edit mode
+                var cost =await context.Costs.FirstOrDefaultAsync(v => v.Id == form_cost.Id);
+                cost.Name = form_cost.Name;
+                cost.CostId = form_cost.CostId;
+                await context.SaveChangesAsync().ConfigureAwait(true);
+                costList.Remove(form_cost);
+                costList.Add(form_cost);
+            }
+            IsFormVisible = false;
         }
-        async Task DeleteItem(int id)
-        {
+    }
+    void EditItem(int id)
+    {
+        form_cost = costList.FirstOrDefault(v=>v.Id==id);
+        IsFormVisible = true;
+    }
+    async Task DeleteItem(int id)
+    {
 
-            if (!await JSRuntime.InvokeAsync<bool>("confirm", $"اطمینان از حذف دسته بندی?"))
-                return;
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"اطمینان از حذف دسته بندی?"))
+            return;
 
 
-            var item = context.Costs.Find(id);
-            context.Costs.Remove(item);
-            context.SaveChanges();
-            costList.Remove(costList.Find(v => v.Id == id));
-        }
+        var item = context.Costs.Find(id);
+        context.Costs.Remove(item);
+        context.SaveChanges();
+        costList.Remove(costList.Find(v => v.Id == id));
+    }
 }

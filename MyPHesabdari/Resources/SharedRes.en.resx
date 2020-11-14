@@ -147,6 +147,9 @@
   <data name="Desc" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="Expenses" xml:space="preserve">
     <value>Expenses</value>
   </data>
