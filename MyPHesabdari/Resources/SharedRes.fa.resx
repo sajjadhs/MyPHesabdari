@@ -165,14 +165,32 @@
   <data name="Lang" xml:space="preserve">
     <value>زبان</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>ورود</value>
+  </data>
+  <data name="LoginToApplication" xml:space="preserve">
+    <value>ورود به برنامه</value>
+  </data>
+  <data name="LoginWithGoogle" xml:space="preserve">
+    <value>ورود با گوگل</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>خروج</value>
+  </data>
   <data name="New" xml:space="preserve">
     <value>جدید</value>
   </data>
   <data name="ParentCategory" xml:space="preserve">
     <value>دسته پدر</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>رمز ورود</value>
+  </data>
   <data name="Payer" xml:space="preserve">
     <value>پرداخت کننده</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>مرا بخاطر بسپار</value>
   </data>
   <data name="required" xml:space="preserve">
     <value>{0} الزامیست</value>
@@ -191,6 +209,9 @@
   </data>
   <data name="TotalIs" xml:space="preserve">
     <value>مجموع مخارج برابر است با</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>نام کاربری</value>
   </data>
   <data name="WelcomeMsg" xml:space="preserve">
     <value>به برنامه  حسابداری شخصی خوش آمدی</value>

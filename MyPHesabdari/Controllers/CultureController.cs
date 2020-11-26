@@ -14,11 +14,10 @@ namespace MyPHesabdari.Controllers
         [HttpGet("[action]")]
         public IActionResult ChangeCulture(string culture, string returnUrl = "")
         {
-
             this.HttpContext.Response.Cookies.Delete(CookieRequestCultureProvider.DefaultCookieName);
-            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName
-                ,CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-        new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
+            this.HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+          CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture, culture)),
+          new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
 
             return LocalRedirect(returnUrl);
         }

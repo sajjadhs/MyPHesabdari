@@ -165,14 +165,32 @@
   <data name="Lang" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginToApplication" xml:space="preserve">
+    <value>Login To Application</value>
+  </data>
+  <data name="LoginWithGoogle" xml:space="preserve">
+    <value>Login with Google</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Log Out</value>
+  </data>
   <data name="New" xml:space="preserve">
     <value>New</value>
   </data>
   <data name="ParentCategory" xml:space="preserve">
     <value>Parent Category</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
   <data name="Payer" xml:space="preserve">
     <value>Payer</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember Me</value>
   </data>
   <data name="required" xml:space="preserve">
     <value>{0} is required</value>
@@ -191,6 +209,9 @@
   </data>
   <data name="TotalIs" xml:space="preserve">
     <value>Total Is</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>User Name</value>
   </data>
   <data name="WelcomeMsg" xml:space="preserve">
     <value>Welcom to Personal Accounting System</value>

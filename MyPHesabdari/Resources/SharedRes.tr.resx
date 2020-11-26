@@ -165,14 +165,32 @@
   <data name="Lang" xml:space="preserve">
     <value>Dil</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Giris</value>
+  </data>
+  <data name="LoginToApplication" xml:space="preserve">
+    <value>Uygulamaya Giris Kapisi </value>
+  </data>
+  <data name="LoginWithGoogle" xml:space="preserve">
+    <value>Google ile giris yap</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Cikis</value>
+  </data>
   <data name="New" xml:space="preserve">
     <value>Yeni</value>
   </data>
   <data name="ParentCategory" xml:space="preserve">
     <value>Ana Kategori</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Sifre</value>
+  </data>
   <data name="Payer" xml:space="preserve">
     <value>Ödeyen</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Beni Hatirla</value>
   </data>
   <data name="required" xml:space="preserve">
     <value>{0} gereklidir</value>
@@ -191,6 +209,9 @@
   </data>
   <data name="TotalIs" xml:space="preserve">
     <value>Toplam</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Kullanici adi</value>
   </data>
   <data name="WelcomeMsg" xml:space="preserve">
     <value>Kişisel muhasebeye hoş geldiniz</value>
